@@ -1,53 +1,179 @@
--- MariaDB dump 10.19  Distrib 10.4.32-MariaDB, for Win64 (AMD64)
+-- phpMyAdmin SQL Dump
+-- version 5.2.1
+-- https://www.phpmyadmin.net/
 --
--- Host: localhost    Database: perpustakaan
--- ------------------------------------------------------
--- Server version	10.4.32-MariaDB
+-- Host: 127.0.0.1
+-- Generation Time: Apr 07, 2025 at 06:35 AM
+-- Server version: 10.4.32-MariaDB
+-- PHP Version: 8.2.12
+
+SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+START TRANSACTION;
+SET time_zone = "+00:00";
+
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
 /*!40101 SET NAMES utf8mb4 */;
-/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
-/*!40103 SET TIME_ZONE='+00:00' */;
-/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
-/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `mahasiswa`
+-- Database: `perpustakaan`
 --
 
-DROP TABLE IF EXISTS `mahasiswa`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `mahasiswa` (
-  `NPM` char(5) NOT NULL,
-  `nama` varchar(20) NOT NULL,
-  `tempat_lahir` varchar(20) NOT NULL,
-  `tanggal_lahir` date NOT NULL,
-  `no_hp` varchar(25) DEFAULT NULL,
-  PRIMARY KEY (`NPM`)
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `anggota`
+--
+
+CREATE TABLE `anggota` (
+  `id_anggota` varchar(10) NOT NULL,
+  `nama` varchar(50) NOT NULL,
+  `jurusan` varchar(20) DEFAULT 'Umum',
+  `tgl_daftar` date NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `mahasiswa`
+-- Dumping data for table `anggota`
 --
 
-LOCK TABLES `mahasiswa` WRITE;
-/*!40000 ALTER TABLE `mahasiswa` DISABLE KEYS */;
-/*!40000 ALTER TABLE `mahasiswa` ENABLE KEYS */;
-UNLOCK TABLES;
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+INSERT INTO `anggota` (`id_anggota`, `nama`, `jurusan`, `tgl_daftar`) VALUES
+('MHS1', 'Yanto', 'Teknik Mekatronika', '2024-01-04'),
+('MHS2', 'Amba', 'Teknik Industri', '2024-02-08'),
+('MHS3', 'Rusdi', 'Teknik Sipil', '2024-04-16');
 
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
-/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `buku`
+--
+
+CREATE TABLE `buku` (
+  `id_buku` varchar(10) NOT NULL,
+  `judul` varchar(100) NOT NULL,
+  `penerbit` varchar(50) DEFAULT NULL,
+  `tahun_terbit` int(11) DEFAULT NULL CHECK (`tahun_terbit` between 1900 and 2025),
+  `id_penerbit` varchar(10) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `buku`
+--
+
+INSERT INTO `buku` (`id_buku`, `judul`, `penerbit`, `tahun_terbit`, `id_penerbit`) VALUES
+('BK01', 'Cara Cepat Pintar', 'SiCepat', 2020, 'PEN01'),
+('BK02', 'Fisika Kuantum', 'Erlangga', 2003, 'PEN02'),
+('BK03', 'Prompt AI', 'Smoothy', 2025, 'PEN03'),
+('BK04', 'MySQL', 'Futuristik', 2019, 'PEN04'),
+('BK05', 'Java', 'Janpanase', 2018, 'PEN05');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `peminjaman`
+--
+
+CREATE TABLE `peminjaman` (
+  `id_peminjaman` int(11) NOT NULL,
+  `id_anggota` varchar(10) DEFAULT NULL,
+  `id_buku` varchar(10) DEFAULT NULL,
+  `tgl_pinjam` date NOT NULL,
+  `tgl_kembali` date DEFAULT NULL,
+  `denda` int(11) DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `peminjaman`
+--
+
+INSERT INTO `peminjaman` (`id_peminjaman`, `id_anggota`, `id_buku`, `tgl_pinjam`, `tgl_kembali`, `denda`) VALUES
+(1, 'MHS1', 'BK01', '2024-09-10', '2024-09-20', 0),
+(2, 'MHS2', 'BK05', '2024-10-10', '2024-10-22', 4000),
+(3, 'MHS3', 'BK02', '2025-03-20', NULL, 6000);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `penerbit`
+--
+
+CREATE TABLE `penerbit` (
+  `id_penerbit` varchar(10) NOT NULL,
+  `nama_penerbit` varchar(50) NOT NULL,
+  `alamat` text DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `penerbit`
+--
+
+INSERT INTO `penerbit` (`id_penerbit`, `nama_penerbit`, `alamat`) VALUES
+('PEN01', 'SiCepat', 'Magelang'),
+('PEN02', 'Erlangga', 'Jakarta'),
+('PEN03', 'Smoothy', 'Jakarta'),
+('PEN04', 'Futuristik', 'Jogjakarta'),
+('PEN05', 'Java', 'Pekalongan');
+
+--
+-- Indexes for dumped tables
+--
+
+--
+-- Indexes for table `anggota`
+--
+ALTER TABLE `anggota`
+  ADD PRIMARY KEY (`id_anggota`);
+
+--
+-- Indexes for table `buku`
+--
+ALTER TABLE `buku`
+  ADD PRIMARY KEY (`id_buku`),
+  ADD KEY `fk_id_penerbit` (`id_penerbit`);
+
+--
+-- Indexes for table `peminjaman`
+--
+ALTER TABLE `peminjaman`
+  ADD PRIMARY KEY (`id_peminjaman`),
+  ADD KEY `id_anggota` (`id_anggota`),
+  ADD KEY `id_buku` (`id_buku`);
+
+--
+-- Indexes for table `penerbit`
+--
+ALTER TABLE `penerbit`
+  ADD PRIMARY KEY (`id_penerbit`);
+
+--
+-- AUTO_INCREMENT for dumped tables
+--
+
+--
+-- AUTO_INCREMENT for table `peminjaman`
+--
+ALTER TABLE `peminjaman`
+  MODIFY `id_peminjaman` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- Constraints for dumped tables
+--
+
+--
+-- Constraints for table `buku`
+--
+ALTER TABLE `buku`
+  ADD CONSTRAINT `fk_id_penerbit` FOREIGN KEY (`id_penerbit`) REFERENCES `penerbit` (`id_penerbit`);
+
+--
+-- Constraints for table `peminjaman`
+--
+ALTER TABLE `peminjaman`
+  ADD CONSTRAINT `peminjaman_ibfk_1` FOREIGN KEY (`id_anggota`) REFERENCES `anggota` (`id_anggota`),
+  ADD CONSTRAINT `peminjaman_ibfk_2` FOREIGN KEY (`id_buku`) REFERENCES `buku` (`id_buku`);
+COMMIT;
+
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-
--- Dump completed on 2025-02-19 21:19:58
